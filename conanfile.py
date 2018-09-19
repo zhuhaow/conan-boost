@@ -172,9 +172,10 @@ class BoostConan(ConanFile):
             cxx_flags.append("-fembed-bitcode")
             cxx_flags.extend(["-arch", tools.to_apple_arch(arch)])
 
+        if tools.is_apple_os(self.settings.os):
             try:
-                cxx_flags.append("-mios-version-min=%s" % self.settings.os.version)
-                self.output.info("iOS deployment target: %s" % self.settings.os.version)
+                flags.append("macosx-version-min=%s" % self.settings.os.version)
+                self.output.info("deployment target: %s" % self.settings.os.version)
             except:
                 pass
 
@@ -250,10 +251,11 @@ class BoostConan(ConanFile):
         contents += ' "%s"' % exe.replace("\\", "/")
 
         contents += " : \n"
-        if "AR" in os.environ:
-            contents += '<archiver>"%s" ' % tools.which(os.environ["AR"]).replace("\\", "/")
-        if "RANLIB" in os.environ:
-            contents += '<ranlib>"%s" ' % tools.which(os.environ["RANLIB"]).replace("\\", "/")
+        if not tools.is_apple_os(self.settings.os):
+            if "AR" in os.environ:
+                contents += '<archiver>"%s" ' % tools.which(os.environ["AR"]).replace("\\", "/")
+            if "RANLIB" in os.environ:
+                contents += '<ranlib>"%s" ' % tools.which(os.environ["RANLIB"]).replace("\\", "/")
         if "CXXFLAGS" in os.environ:
             contents += '<cxxflags>"%s" ' % os.environ["CXXFLAGS"]
         if "CFLAGS" in os.environ:
