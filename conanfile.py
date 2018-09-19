@@ -295,11 +295,7 @@ class BoostConan(ConanFile):
             # For GCC < v5 and Clang we need to provide the entire version string
             return compiler, compiler_version, ""
         elif self.settings.compiler == "apple-clang":
-            if self.settings.os == "iOS":
-                cc = tools.XCRun(self.settings, tools.apple_sdk_name(self.settings)).cc
-                return "darwin", self.bjam_darwin_toolchain_version(), cc
-            else:
-                return "clang", compiler_version, ""
+            return "darwin", self.bjam_darwin_toolchain_version(), cc
         elif self.settings.compiler == "sun-cc":
             return "sunpro", compiler_version, ""
         else:
